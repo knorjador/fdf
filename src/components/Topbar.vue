@@ -6,7 +6,6 @@ import { useRoute, useRouter } from 'vue-router'
 
 import Menubar from 'primevue/menubar'
 import Button from 'primevue/button'
-import Panel from 'primevue/panel'
 
 import AppName from './AppName.vue'
 
@@ -31,7 +30,7 @@ const gotoLogin = () => {
             <Button
                 v-if="!isLoginPage" 
                 label="Connexion"
-                class="p-button p-button-login" 
+                class="p-button c-button-login" 
                 @click="gotoLogin"
             />
          </template>
@@ -45,7 +44,7 @@ const gotoLogin = () => {
     margin: 21px 64px;
 }
 
-.p-button-login {
+.c-button-login {
     background: var(--white);
     border: 1px solid var(--secondary-color);
     color: var(--normal-text);
@@ -55,7 +54,7 @@ const gotoLogin = () => {
     transition: all 0.3s ease-in-out;
 }
 
-.p-button-login:hover {
+.c-button-login:hover {
     background: var(--secondary-color) !important;
     border: 1px solid var(--secondary-color) !important;
     color: var(--white) !important;

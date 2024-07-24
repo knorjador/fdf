@@ -27,4 +27,10 @@
 	color: var(--normal-text)
 }
 
+@media (max-width: 768px) {
+    .speech {
+        font-size: 1.1rem;
+    }
+}
+
 </style>
