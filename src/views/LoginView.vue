@@ -2,6 +2,8 @@
 <script setup lang="ts">
 
 import { ref } from 'vue';
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
@@ -10,21 +12,30 @@ import Button from 'primevue/button'
 import Loading from '../components/Loading.vue'
 
 const 
-    email = ref(null),
+    router = useRouter(),
+    authStore = useAuthStore(),
+    email = ref(''),
     fail = ref(''),
     loading = ref(false)
 
 const processLogin = async () => {
-    console.log('login')
-
     loading.value = true
 
-    setTimeout(() => {
-        
+    const success = await authStore.login(email.value)
+
+    console.log('---- processLogin ----')
+    console.log(success)
+    console.log('---- processLogin ----')
+
+    setTimeout(() => {        
         loading.value = false
-        fail.value = 'Email incorrect'
-    
-    }, 3000)
+
+        if (success) {
+            router.push('/home');
+        } else {
+            fail.value = 'Email incorrect'
+        }
+    }, 800)
 }
 
 const clearFail = () => fail.value = ''
