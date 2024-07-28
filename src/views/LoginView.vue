@@ -13,7 +13,6 @@ import Loading from '../components/Loading.vue'
 
 const 
     router = useRouter(),
-    authStore = useAuthStore(),
     email = ref(''),
     fail = ref(''),
     loading = ref(false)
@@ -21,16 +20,18 @@ const
 const processLogin = async () => {
     loading.value = true
 
-    const success = await authStore.login(email.value)
+    const { authStates, login } = useAuthStore()
+		
+	await login(email.value)
 
     console.log('---- processLogin ----')
-    console.log(success)
+    console.log(authStates.authenticated)
     console.log('---- processLogin ----')
 
     setTimeout(() => {        
         loading.value = false
 
-        if (success) {
+        if (authStates.authenticated) {
             router.push('/home');
         } else {
             fail.value = 'Email incorrect'
@@ -52,7 +53,9 @@ const clearFail = () => fail.value = ''
             <!-- EMAIL -->
             <div class="c-field">
                 <FloatLabel class="c-float-label">
-                    <label for="email">Email</label>
+                    <label for="email">
+                        Email
+                    </label>
                     <InputText 
                         v-model="email" 
                         type="email"

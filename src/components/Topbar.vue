@@ -1,8 +1,7 @@
 
 <script setup lang="ts">
 
-import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 import Menubar from 'primevue/menubar'
@@ -11,19 +10,20 @@ import Button from 'primevue/button'
 import AppName from './AppName.vue'
 
 const 
-    route = useRoute(),
     router = useRouter(),
-    authStore = useAuthStore()
+    { authStates, logout } = useAuthStore()
 
 const gotoLogin = () => {
     router.push('/login')
 }
 
-const logout = async () => {
-    const success = await authStore.logout()
+const processLogout = async () => {
+    const success = await logout()
 
-    if (success)
+    if (success) {
+        authStates.email = ''
         router.push('/')
+    }
 }
 
 </script>
@@ -36,10 +36,10 @@ const logout = async () => {
         </template>
          <template #end>
             <span class="c-email">
-                {{ authStore._email }}
+                {{ authStates.email }}
             </span>
             <Button
-                v-if="!authStore.isAuthenticated" 
+                v-if="!authStates.authenticated" 
                 label="Connexion"
                 class="p-button c-button-login" 
                 @click="gotoLogin"
@@ -48,7 +48,7 @@ const logout = async () => {
                 v-else
                 label="Déconnexion"
                 class="p-button c-button-login"
-                @click="logout"
+                @click="processLogout"
             />
          </template>
      </Menubar>
@@ -58,7 +58,7 @@ const logout = async () => {
 <style scoped>
 
 .p-menubar {
-    margin: 21px 64px;
+    padding: 21px 64px;
 }
 
 .c-email {
@@ -85,7 +85,7 @@ const logout = async () => {
 
 @media (max-width: 768px) {
     .p-menubar {
-        margin: 21px 16px;
+        padding: 21px 16px;
     }
 }
 

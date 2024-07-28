@@ -34,33 +34,23 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
 	console.log(from)
 
-	const 
-		authStore = useAuthStore(),
-		isAuthenticated = await authStore.checkAuth()
+	const { authStates, checkAuth } = useAuthStore()
+		
+	await checkAuth()
+
+	const authenticated = authStates.authenticated
 
 	console.log('---- beforeEach ----')
-	console.log(isAuthenticated)
+	console.log(authenticated)
 	console.log('---- beforeEach ----')
 	
-	if (to.meta.requiresAuth && !isAuthenticated) {
+	if (to.meta.requiresAuth && !authenticated) {
 	  	next('/login')
-	} else if (isAuthenticated && (to.path === '/' || to.path === '/login')) {
+	} else if (authenticated && (to.path === '/' || to.path === '/login')) {
 	  	next('/home')
 	} else {
 	  	next()
 	}
 })
-
-// router.beforeEach((to, from, next) => {
-// 	const token = localStorage.getItem('bearer')
-
-// 	if (to.meta.requiresAuth && !token) {
-// 	  	next('/login')
-// 	} else if (token && (to.path === '/' || to.path === '/login')) {
-// 	  	next('/home')
-// 	} else {
-// 	  	next()
-// 	}
-// })
 
 export default router

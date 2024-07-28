@@ -4,24 +4,20 @@ import type { Ref } from 'vue'
 import { defineStore } from 'pinia'
 import { CONFIG } from '../config'
 
-type AuthStoreState = {
-    authenticated: Ref<boolean>;
-    email: Ref<string>;
+type ApiStoreState = {
+    up: Ref<boolean>;
     [key: string]: Ref<any>;
 }
 
-export const useAuthStore = defineStore('auth', () => {
-    const authStates: AuthStoreState = {
-        authenticated: ref(false),
-        email: ref('')
+export const useApiStore = defineStore('api', () => {
+    const apiStates: ApiStoreState = {
+        up: ref(false)
     }
       
     const performRequest = async (uri: string, data = {}) => {
 
-        console.log(CONFIG)
-
         try {
-            const request = await fetch(`${CONFIG.AUTH}/${uri}`, {
+            const request = await fetch(`${CONFIG.API}/${uri}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -33,13 +29,13 @@ export const useAuthStore = defineStore('auth', () => {
             console.log(request)
 
             if (request.ok) {
-                const { response } = await request.json()
+                const response = await request.json()
 
                 console.log(response)
 
                 for (const property in response) 
-                    if (property in authStates)
-                        authStates[property].value = response[property]
+                    // if (property in apiStates)
+                    apiStates[property].value = response[property]
 
                 return true
             }
@@ -52,11 +48,9 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
-    const login = async (email: string) => await performRequest('login', { email })
+    const up = async () => await performRequest('up')
 
-    const checkAuth = async () => await performRequest('check')
+    const add = async () => await performRequest('add', { siret: '' })
 
-    const logout = async () => await performRequest('logout')
-
-    return { authStates, login, checkAuth, logout }
+    return { apiStates, up, add }
 })

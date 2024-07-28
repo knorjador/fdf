@@ -25,6 +25,20 @@
 	--color-text: var(var(--normal-text));
 }
 
+.c-tooltip-siret .p-tooltip-text {
+	margin-top: -50px;
+	padding: 5px 10px;
+	border-radius: 4px;
+	background: var(--secondary-color) !important;
+    color: var(--white) !important;
+}
+
+.c-tooltip-siret .p-tooltip-arrow {
+	top: -15px;
+	border-top-color: var(--secondary-color) !important;
+	border-bottom-color: transparent !important;
+}
+
 @media (prefers-color-scheme: dark) {
 	:root {
 		--color-background: var(--black);

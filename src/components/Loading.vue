@@ -6,7 +6,9 @@
 <template>
 
     <div class="loading">
-        <span>{&nbsp;</span><span>&nbsp;}</span>
+        <span>{&nbsp;</span> 
+        <span>FD</span> 
+        <span>&nbsp;}</span>
     </div>
 
  </template>
@@ -23,16 +25,24 @@
     opacity: 0.8;
 }
 
-.loading span {
+.loading span:nth-child(1), .loading span:nth-child(3) {
     display: inline-block;
     margin-top: 30px;
     -webkit-animation: pulse 0.4s alternate infinite ease-in-out;
     animation: pulse 0.4s alternate infinite ease-in-out;
 }
 
-.loading span:nth-child(odd) {
+.loading span:nth-child(1) {
     -webkit-animation-delay: 0.4s;
     animation-delay: 0.4s;
+}
+
+.loading span:nth-child(2) {
+    display: inline-block;
+    margin-top: 35px;
+    font-size: 40px;
+    font-weight: bold;
+    color: var(--primary-color);
 }
 
 @-webkit-keyframes pulse {
