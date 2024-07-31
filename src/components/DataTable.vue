@@ -1,7 +1,7 @@
 
 <script setup lang="ts">
 
-import { ref, defineProps, defineEmits, toRaw } from 'vue'
+import { ref, defineEmits, toRaw } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import Toast from 'primevue/toast';
 
