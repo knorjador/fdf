@@ -1,62 +1,48 @@
 
 import { ref } from 'vue'
-import type { Ref } from 'vue'
 import { defineStore } from 'pinia'
-import { CONFIG } from '../config'
+import { CONFIG } from '@/config'
+import type { AuthStoreState, RequestOptions } from '@/types';
+import performRequest from '@/utils/http';
 
-type AuthStoreState = {
-    authenticated: Ref<boolean>;
-    email: Ref<string>;
-    [key: string]: Ref<any>;
-}
-
-export const useAuthStore = defineStore('auth', () => {
+export const useAuthStore = defineStore('auth_store', () => {
     const authStates: AuthStoreState = {
         authenticated: ref(false),
         email: ref('')
     }
-      
-    const performRequest = async (uri: string, data = {}) => {
 
-        console.log(CONFIG)
+    const processResquest = async (options: RequestOptions) => {
+        options.host = CONFIG.AUTH
 
-        try {
-            const request = await fetch(`${CONFIG.AUTH}/${uri}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'include',
-                body: JSON.stringify(data)
-            })
+        const { success, response } = await performRequest(options)
 
-            console.log(request)
+        console.log('---- processResquest AUTH ----')
+        console.log('sucess', success)
+        console.log(response)
+        console.log('---- processResquest AUTH ----')
 
-            if (request.ok) {
-                const { response } = await request.json()
+        if (success)
+            for (const property in response) 
+                if (property in authStates)
+                    authStates[property].value = response[property]
 
-                console.log(response)
-
-                for (const property in response) 
-                    if (property in authStates)
-                        authStates[property].value = response[property]
-
-                return true
-            }
-
-            return false
-        } catch (fail) {
-            console.log(fail)
-
-            return false
-        }
+        return success
     }
 
-    const login = async (email: string) => await performRequest('login', { email })
+    const check = async () => await processResquest({
+        path: 'check'
+    })
+      
+    const login = async (email: string) => await processResquest({
+        path: 'login',
+        data : {
+            email 
+        }
+    })
 
-    const checkAuth = async () => await performRequest('check')
+    const logout = async () => await processResquest({
+        path: 'logout'
+    })
 
-    const logout = async () => await performRequest('logout')
-
-    return { authStates, login, checkAuth, logout }
+    return { authStates, check, login, logout }
 })

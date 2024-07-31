@@ -1,15 +1,14 @@
 
 <script setup lang="ts">
 
-import { ref } from 'vue';
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 
-import Loading from '../components/Loading.vue'
+import { useAuthStore } from '@/stores/auth'
+import Loading from '@/components/Loading.vue'
 
 const 
     router = useRouter(),
@@ -105,14 +104,13 @@ const clearFail = () => fail.value = ''
 
 .c-float-label {
     width: 80%;
-    padding: 0.5rem;
-    border-radius: 0.25rem;
-    border: 2px solid var(--primary-color);
-    color: var(--normal-text)
+    border: none;
 }
 
 .c-input {
     width: 100%;
+    color: var(--normal-text);
+    border: 2px solid var(--primary-color);
 }
 
 .c-button-login {
@@ -140,7 +138,7 @@ const clearFail = () => fail.value = ''
 }
   
 .c-fail > span {
-    margin-left: 5px;
+    margin-left: 3px;
 }
 
 </style>

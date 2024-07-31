@@ -1,8 +1,34 @@
 
 <script setup lang="ts">
 
+import { defineProps, computed } from 'vue'
 import Dialog from 'primevue/dialog'
-import Loading from './Loading.vue'
+
+const props = defineProps({
+    background: {
+        type: String,
+        default: 'dark'
+    },
+    paddingTop: {
+        type: [String, Number],
+        default: 128
+    }
+})
+
+const computedBackground = computed(() => {
+    if (props.background === 'dark')
+        return 'rgba(0, 0, 0, 0.3)'
+    else if (props.background === 'light')
+        return 'rgba(255, 255, 255, 0.3)'
+
+    return props.background;
+})
+
+const computedPaddingTop = computed(() => {
+    return typeof props.paddingTop === 'number' 
+        ? `${props.paddingTop}px` 
+        : props.paddingTop;
+})
 
 </script>
 
@@ -10,10 +36,8 @@ import Loading from './Loading.vue'
 
     <Dialog 
         :pt="{
-                root: { class: '!border-0 !bg-transparent'},
                 mask: { 
-                    class: '!backdrop-blur-sm', 
-                    style: 'background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(2px);' 
+                    style: `background: ${computedBackground}; backdrop-filter: blur(2px);` 
                 }
         }"
         :closable="false"
@@ -21,16 +45,16 @@ import Loading from './Loading.vue'
             width: '100vw', 
             height: '100vh', 
             display: 'flex',
-            paddingTop: '128px'
+            alignItems: 'center',
+            paddingTop: computedPaddingTop,
         }"
     >
-        <Loading />
+        <slot />
     </Dialog>
 
  </template>
 
 <style scoped>
-
 
 
 </style>

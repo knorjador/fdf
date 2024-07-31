@@ -1,56 +1,67 @@
 
 import { ref } from 'vue'
-import type { Ref } from 'vue'
 import { defineStore } from 'pinia'
-import { CONFIG } from '../config'
+import type { ApiStoreState, RequestOptions, Company, Payload } from '@/types';
+import performRequest from '@/utils/http';
 
-type ApiStoreState = {
-    up: Ref<boolean>;
-    [key: string]: Ref<any>;
-}
-
-export const useApiStore = defineStore('api', () => {
+export const useApiStore = defineStore('api_store', () => {
     const apiStates: ApiStoreState = {
-        up: ref(false)
+        up: ref(false),
+        fail: ref(false),
+        redirect: ref(false),
+        companies: ref([]),
+        payload: ref<Payload>({}),
+        status: ref('up')
     }
-      
-    const performRequest = async (uri: string, data = {}) => {
 
-        try {
-            const request = await fetch(`${CONFIG.API}/${uri}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'include',
-                body: JSON.stringify(data)
-            })
+    const processResquest = async (options: RequestOptions) => {
+        const up = await performRequest()
 
-            console.log(request)
+        if (up) {
+            const { success, response } = await performRequest(options)
 
-            if (request.ok) {
-                const response = await request.json()
-
-                console.log(response)
-
+            console.log('---- processResquest API ----')
+            console.log('sucess', success)
+            console.log(response)
+            console.log('---- processResquest API ----')
+    
+            if (success)
                 for (const property in response) 
-                    // if (property in apiStates)
-                    apiStates[property].value = response[property]
+                    if (property in apiStates)
+                        apiStates[property].value = response[property]
 
-                return true
-            }
-
-            return false
-        } catch (fail) {
-            console.log(fail)
-
-            return false
+            if (apiStates.redirect.value === true)
+                return location.reload()
+    
+            return success
         }
+
+        apiStates.status.value = 'down'
     }
 
-    const up = async () => await performRequest('up')
+    const create = async (siret: string) => await processResquest({ 
+        path: 'create',
+        data: {
+            siret 
+        }
+    })
 
-    const add = async () => await performRequest('add', { siret: '' })
+    const read = async () => await processResquest({ 
+        path: 'read',
+        method: 'GET'
+    })
 
-    return { apiStates, up, add }
+    const update = async (data: Company) => await processResquest({ 
+        path: 'update',
+        method: 'PUT',
+        data
+    })
+
+    const delete_ = async (siret: string) => await processResquest({ 
+        path: `delete/${siret}`,
+        method: 'DELETE'
+    })
+
+    return { apiStates, create, read, update, delete_ }
 })
+

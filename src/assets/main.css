@@ -1,3 +1,31 @@
 
 @import './base.css';
 
+.p-dialog {
+    max-height: 100% !important;
+    background: transparent !important;
+    color: var(--normal-text) !important;
+    border: none !important;
+}
+
+/* .p-toast-close-button {
+    display: none !important;
+} */
+
+.p-toast-message-content svg {
+    margin-top: 4px !important;
+}
+
+.p-toast-detail {
+    color: var(--normal-text) !important;
+}
+
+
+@media (max-width: 768px) {
+    .p-toast {
+        width: 310px !important;
+        right: 50% !important;
+        transform: translateX(50%) !important;
+    }
+}
+

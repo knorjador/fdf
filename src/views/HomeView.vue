@@ -1,54 +1,91 @@
 
 <script setup lang="ts">
 
-import { ref } from 'vue';
-import { useApiStore } from '@/stores/api'
+import { ref, onMounted } from 'vue'
+import { useToast } from 'primevue/usetoast'
+import Toast from 'primevue/toast';
 
 import FloatLabel from 'primevue/floatlabel'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 
-import { CONFIG } from '../config';
-import Overlay from '../components/Overlay.vue'
-import DataTable from '../components/DataTable.vue'
+import type { Company } from '@/types'
+import { useApiStore } from '@/stores/api'
+import { isValidSiret, formatDetail } from '@/utils/helpers'
+import Overlay from '@/components/Overlay.vue'
+import Loading from '@/components/Loading.vue'
+import DataTable from '@/components/DataTable.vue'
 
 const 
+    toast = useToast(),
+    { apiStates, create, read } = useApiStore(),
+    companies = ref<Company[]>([]),
     siret = ref(''),
-    overlay = ref(false),
     loading = ref(false),
     fail = ref('')
 
-const processAdd = async () => {
-    if (!isValidSiret())
-        return fail.value = 'N° SIRET incorrect'
+onMounted(async () => {
+    await fetchCompanies()
+})
 
-    overlay.value = true
+const fetchCompanies = async () => {
+    await read()
 
-    setTimeout(() => overlay.value = false, 2600)
-
-    // add send email && siret
-    
-    const { apiStates, up } = useApiStore()
-
-    await up()
-
-    console.log('---- processAdd ----')
-    console.log(apiStates.up)
-    console.log('---- processAdd ----')
+    companies.value = apiStates.companies
 }
 
-const isValidSiret = () => CONFIG.REGEXES.siret.test(siret.value) 
+const processCreate = async () => {
+    const _siret = siret.value.replace(/\s+/g, '')
+
+    if (!isValidSiret(_siret))
+        return fail.value = 'N° SIRET incorrect'
+
+    loading.value = true
+
+    setTimeout(async() => {        
+        await create(_siret)
+
+        const { severity, summary, detail } = apiStates.payload
+
+        await fetchCompanies()
+
+        loading.value = false
+
+        console.log('severity', severity)
+        console.log('summary', summary)
+        console.log('detail', detail)
+
+        toast.add({ 
+            severity, 
+            summary, 
+            detail: formatDetail(detail), 
+            closable: false,
+            life: 4000
+        })
+
+        console.log('---- processCreate ----')
+        console.log('siret', siret.value)
+        console.log('payload', apiStates.payload)
+        console.log('---- processCreate ----')
+
+        siret.value = ''
+    }, 800)
+}
 
 const clearFail = () => fail.value = ''
 
 </script>
 
 <template>
-    <Overlay v-model:visible="overlay" />
+    <Overlay v-model:visible="loading" background="light">
+        <Loading />
+    </Overlay>
+
+    <Toast />
 
     <div class="add-form">
         <form 
-            @submit.prevent="processAdd"
+            @submit.prevent="processCreate"
         >
             <div class="c-field">
                 <FloatLabel class="c-float-label">
@@ -62,7 +99,7 @@ const clearFail = () => fail.value = ''
                         class="c-input"
                         required
                         v-tooltip.top="{
-                            value: '14 chiffres, ex : 82178322200044',
+                            value: '14 chiffres, ex : 12345678900001',
                             class: 'c-tooltip-siret'
                         }"
                         @focus="clearFail"
@@ -71,7 +108,7 @@ const clearFail = () => fail.value = ''
                 <Button
                     type="submit"
                     icon="pi pi-plus"
-                    class="p-button c-button-add"
+                    class="p-button c-button-create"
                     :disabled="loading"
                 />
             </div>
@@ -87,7 +124,10 @@ const clearFail = () => fail.value = ''
         </form>
     </div>
 
-    <DataTable />
+    <DataTable 
+        :companies="companies" 
+        @refresh="fetchCompanies"
+    />
 
 </template>
     
@@ -109,26 +149,25 @@ const clearFail = () => fail.value = ''
 
 .c-float-label {
     width: 70%;
-    padding: 0.5rem;
-    border-radius: 0.25rem;
-    border: 1px solid #e2e8f0;
-    color: var(--normal-text);
+    border: none;
 }
 
 .c-input {
     width: 100%;
-}
-
-.c-button-add {
-    background: var(--white);
-    border: 1px solid var(--secondary-color);
+    border: 1px solid var(--primary-color);
     color: var(--normal-text);
-    font-weight: bold;
-    padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
 }
 
-.c-button-add:hover {
+.c-button-create {
+    margin-left: 10px;
+    font-weight: bold;
+    border-radius: 0.25rem;
+    background: var(--white);
+    color: var(--normal-text);
+    border: 1px solid var(--primary-color);
+}
+
+.c-button-create:hover {
     background: var(--secondary-color) !important;
     border: 1px solid var(--secondary-color) !important;
     color: var(--white) !important;
@@ -142,6 +181,9 @@ const clearFail = () => fail.value = ''
 
 .c-fail {
     position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     text-align: center;
     font-weight: bold;

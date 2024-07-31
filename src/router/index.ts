@@ -1,14 +1,12 @@
 
 import { createRouter, createWebHistory } from 'vue-router'
-
 import { useAuthStore } from '@/stores/auth'
-
-import WelcomeView from '../views/WelcomeView.vue'
-import LoginView from '../views/LoginView.vue'
-import HomeView from '../views/HomeView.vue'
+import WelcomeView from '@/views/WelcomeView.vue'
+import LoginView from '@/views/LoginView.vue'
+import HomeView from '@/views/HomeView.vue'
+import NotFound from '@/views/404View.vue'
 
 const router = createRouter({
-
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: [
 		{
@@ -27,29 +25,31 @@ const router = createRouter({
 			component: HomeView,
 			meta: { requiresAuth: true }
 		},
+		{
+			path: '/:pathMatch(.*)*',
+			name: '404View',
+			component: NotFound,
+			meta: { goBack: true }
+		}
 	]
-
 })
 
 router.beforeEach(async (to, from, next) => {
-	console.log(from)
-
-	const { authStates, checkAuth } = useAuthStore()
+	const { authStates, check } = useAuthStore()
 		
-	await checkAuth()
+	await check()
 
 	const authenticated = authStates.authenticated
-
-	console.log('---- beforeEach ----')
-	console.log(authenticated)
-	console.log('---- beforeEach ----')
 	
 	if (to.meta.requiresAuth && !authenticated) {
 	  	next('/login')
 	} else if (authenticated && (to.path === '/' || to.path === '/login')) {
 	  	next('/home')
 	} else {
-	  	next()
+		console.log('---- from ----')
+		console.log(from)
+		console.log('---- from ----')
+		next()
 	}
 })
 
