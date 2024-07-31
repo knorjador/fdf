@@ -23,10 +23,6 @@ const processLogin = async () => {
 		
 	await login(email.value)
 
-    console.log('---- processLogin ----')
-    console.log(authStates.authenticated)
-    console.log('---- processLogin ----')
-
     setTimeout(() => {        
         loading.value = false
 

@@ -102,7 +102,7 @@ const editCompany = async () => {
             toast.add({
                 severity, 
                 summary, 
-                detail: formatDetail(detail),
+                detail: formatDetail(detail ?? ''),
                 closable: false,
                 life: TOAST_LIFE
             })
@@ -129,9 +129,9 @@ const deleteCompany = async () => {
 
         if (severity)
             toast.add({ 
-                severity, 
+                severity: severity ?? 'info', 
                 summary, 
-                detail: formatDetail(detail),
+                detail: formatDetail(detail ?? ''),
                 closable: false,
                 life: TOAST_LIFE
             })

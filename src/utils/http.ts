@@ -1,8 +1,8 @@
 
 import { CONFIG } from '@/config'
-import type { RequestOptions } from '@/types'
+import type { PerformRequestResponse, RequestOptions } from '@/types'
 
-const performRequest = async (options: RequestOptions = {}) => {
+const performRequest = async (options: RequestOptions = {}): Promise<PerformRequestResponse> => {
     const defaultOptions: RequestOptions = {
         host: CONFIG.API,
         path: 'up',
@@ -16,10 +16,6 @@ const performRequest = async (options: RequestOptions = {}) => {
     options = { ...defaultOptions, ...options }
     options.method = options.method?.toUpperCase()
 
-    console.log('---- performRequest RequestOptions ----')
-    console.log('options', options)
-    console.log('---- performRequest RequestOptions ----')
-
     try {
         const request = await fetch(`${options.host}/${options.path}`, {
             method: options.method,
@@ -28,12 +24,8 @@ const performRequest = async (options: RequestOptions = {}) => {
             credentials: 'include'
         })
 
-        console.log(request)
-
         if (request.ok) {
             const { response } = await request.json()
-
-            console.log(response)
 
             return {
                 success: true,
@@ -41,13 +33,11 @@ const performRequest = async (options: RequestOptions = {}) => {
             }
         } else {
             if (request.status === 401) 
-                return location.reload()
+                location.reload()
         }
 
         return { success: false }
     } catch (fail) {
-        console.log(fail)
-
         return { success: false }
     }
 }

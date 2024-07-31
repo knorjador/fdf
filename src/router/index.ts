@@ -46,9 +46,6 @@ router.beforeEach(async (to, from, next) => {
 	} else if (authenticated && (to.path === '/' || to.path === '/login')) {
 	  	next('/home')
 	} else {
-		console.log('---- from ----')
-		console.log(from)
-		console.log('---- from ----')
 		next()
 	}
 })

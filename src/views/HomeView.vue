@@ -51,22 +51,13 @@ const processCreate = async () => {
 
         loading.value = false
 
-        console.log('severity', severity)
-        console.log('summary', summary)
-        console.log('detail', detail)
-
         toast.add({ 
             severity, 
             summary, 
-            detail: formatDetail(detail), 
+            detail: formatDetail(detail ?? ''), 
             closable: false,
             life: 4000
         })
-
-        console.log('---- processCreate ----')
-        console.log('siret', siret.value)
-        console.log('payload', apiStates.payload)
-        console.log('---- processCreate ----')
 
         siret.value = ''
     }, 800)

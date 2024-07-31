@@ -19,11 +19,6 @@ export const useApiStore = defineStore('api_store', () => {
 
         if (up) {
             const { success, response } = await performRequest(options)
-
-            console.log('---- processResquest API ----')
-            console.log('sucess', success)
-            console.log(response)
-            console.log('---- processResquest API ----')
     
             if (success)
                 for (const property in response) 

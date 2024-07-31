@@ -16,11 +16,6 @@ export const useAuthStore = defineStore('auth_store', () => {
 
         const { success, response } = await performRequest(options)
 
-        console.log('---- processResquest AUTH ----')
-        console.log('sucess', success)
-        console.log(response)
-        console.log('---- processResquest AUTH ----')
-
         if (success)
             for (const property in response) 
                 if (property in authStates)

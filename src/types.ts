@@ -19,6 +19,11 @@ export type ApiStoreState = {
 }
 
 // ---- API ----
+export interface PerformRequestResponse {
+    success: boolean;
+    response?: any;
+}
+
 export interface RequestOptions {
     host?: string
     path?: string
@@ -35,8 +40,10 @@ export interface Company {
     tva: string
 }
 
+export type Severity = 'warn' | 'success' | 'info' | 'error' | 'secondary' | 'contrast'
+
 export interface Payload {
-    severity?: string
+    severity?: Severity
     summary?: string
     detail?: string
 }
