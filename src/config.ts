@@ -10,7 +10,7 @@ export const CONFIG = {
         siret: /^\d{14}$/,
         siren: /^\d{9}$/,
         company: {
-            regex: /^[a-zA-Z0-9\s]{1,255}$/,
+            regex: /^[a-zA-Z0-9\s]{0,255}$/,
             fields: [
                 { key: 'name', display: 'Nom'},
                 { key: 'address', display: 'Adresse'},
